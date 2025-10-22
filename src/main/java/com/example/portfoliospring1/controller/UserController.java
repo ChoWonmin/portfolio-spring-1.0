@@ -18,7 +18,6 @@ public class UserController {
     public BaseResponse<UserDto> getUser(@RequestParam String nickname) {
         return new BaseResponse<>(userService.getUser(nickname));
     }
-
     @GetMapping("/get-users")
     public BaseResponse<List<UserDto>> getUser() {
         return new BaseResponse<>(userService.getUsers());
@@ -28,4 +27,10 @@ public class UserController {
     public BaseResponse<Long> addUser(@RequestBody AddUserDto addUserDto) {
         return new BaseResponse<>(userService.addUser(addUserDto));
     }
+
+    @GetMapping("/is-valid-nickname")
+    public BaseResponse<Boolean> isValidNickname(@RequestParam String nickname) {
+        return new BaseResponse<>(userService.isValidNickname(nickname));
+    }
+
 }

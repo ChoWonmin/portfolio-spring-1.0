@@ -9,4 +9,5 @@ public class BaseException extends RuntimeException {
     public BaseException(BaseResponseStatusEnum baseResponseStatusEnum) {
         this.statusEnum = baseResponseStatusEnum;
     }
+
 }
