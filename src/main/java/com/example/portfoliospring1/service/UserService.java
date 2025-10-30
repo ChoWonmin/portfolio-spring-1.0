@@ -4,6 +4,7 @@ import com.example.portfoliospring1.controller.response.BaseException;
 import com.example.portfoliospring1.controller.response.BaseResponseStatusEnum;
 import com.example.portfoliospring1.domain.dto.UserDto;
 import com.example.portfoliospring1.domain.dto.request.AddUserDto;
+import com.example.portfoliospring1.domain.dto.request.LoginByEmailDto;
 import com.example.portfoliospring1.domain.entity.User;
 import com.example.portfoliospring1.repository.UserRepository;
 import com.example.portfoliospring1.util.JwtUtil;
@@ -77,9 +78,15 @@ public class UserService {
         return true;
     }
 
-    public String login(String nickname, String password) {
-        // repository user 가져오기 ...
-        return jwtUtil.generateToken(1L, "nickname hi", "email hi");
+    public String login(LoginByEmailDto loginByEmailDto ) {
+        try {
+            User user = userRepository.findByEmailAndPassword(loginByEmailDto.getEmail(), loginByEmailDto.getPassword())
+                    .orElseThrow();
+            return jwtUtil.generateToken(user.getId(), user.getNickname(), user.getEmail());
+
+        } catch (Exception e) {
+            throw new BaseException(BaseResponseStatusEnum.FAILED_LOGIN);
+        }
     }
 
 }
