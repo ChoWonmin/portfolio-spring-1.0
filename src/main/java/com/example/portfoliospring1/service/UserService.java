@@ -80,7 +80,9 @@ public class UserService {
 
     public String login(LoginByEmailDto loginByEmailDto ) {
         try {
-            User user = userRepository.findByEmailAndPassword(loginByEmailDto.getEmail(), loginByEmailDto.getPassword())
+            User user = userRepository.findByEmailAndPassword(
+                        loginByEmailDto.getEmail(), loginByEmailDto.getPassword()
+                    )
                     .orElseThrow();
             return jwtUtil.generateToken(user.getId(), user.getNickname(), user.getEmail());
 
