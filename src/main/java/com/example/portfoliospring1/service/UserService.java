@@ -3,12 +3,16 @@ package com.example.portfoliospring1.service;
 import com.example.portfoliospring1.controller.response.BaseException;
 import com.example.portfoliospring1.controller.response.BaseResponseStatusEnum;
 import com.example.portfoliospring1.domain.dto.UserDto;
+import com.example.portfoliospring1.domain.dto.infra.KauthTokenDto;
 import com.example.portfoliospring1.domain.dto.request.AddUserDto;
 import com.example.portfoliospring1.domain.dto.request.LoginByEmailDto;
+import com.example.portfoliospring1.domain.dto.request.LoginByKakaoDto;
 import com.example.portfoliospring1.domain.entity.User;
+import com.example.portfoliospring1.infra.feign.KauthFeignClient;
 import com.example.portfoliospring1.repository.UserRepository;
 import com.example.portfoliospring1.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +25,15 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserService {
 
+    @Value("${kakao.api}")
+    private String KAKAO_API_KEY;
+    @Value("${kakao.secret}")
+    private String KAKAO_SECRET_KEy;
+
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+
+    private final KauthFeignClient kauthFeignClient;
 
     public UserDto getUser(String nickname) {
         User user = userRepository.findByNickname(nickname);
@@ -89,6 +100,24 @@ public class UserService {
         } catch (Exception e) {
             throw new BaseException(BaseResponseStatusEnum.FAILED_LOGIN);
         }
+    }
+
+    public String loginByKakaO(LoginByKakaoDto loginByKakaoDto ) {
+        try {
+            KauthTokenDto kauthTokenDto = kauthFeignClient.getKakaoToken(
+                    "authorization_code",
+                    KAKAO_API_KEY,
+                    loginByKakaoDto.getOrigin() + "/login/kakao",
+                    loginByKakaoDto.getCode(),
+                    KAKAO_SECRET_KEy);
+
+            // https://kauth.kakao.com/oauth/token
+            System.out.println("잘 성공함. " + kauthTokenDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "";
     }
 
 }
